@@ -1,17 +1,54 @@
-import { Button, HeaderTitle } from '@react-navigation/elements';
-import { Link, useRouter } from 'expo-router';
-import { Text, View, StyleSheet } from "react-native";
+import { Text, View } from 'react-native';
+import { StyleSheet } from 'react-native';
+import { Button } from '@react-navigation/elements';
+import { Image } from 'react-native';
+import { useState } from 'react';
 
-export default function Index() {
-  const router = useRouter();
+async function getData() {
+    const url = 'https://dog.ceo/api/breeds/image/random';
 
-  return (
-    <View style={styles.container}>
-      <HeaderTitle>Hello World</HeaderTitle>
-      <Link style={styles.link} href="/details">View Details</Link>
-      <Button onPress={() => router.navigate('/details')}>Go to Details</Button>
-    </View>
-  );
+    try {
+        const response = await fetch(url);
+
+        if (!response.ok) {
+            throw new Error(`Response status: ${response.status}`);
+        }
+
+        const json = await response.json();
+        
+        return json;
+    } catch (e) {
+        let errorMessage = (e as Error).message;
+
+        console.error(errorMessage);
+    }
+}
+
+export default function Home() {
+    const [dogImage, setDogImage] = useState(null);
+
+    const handlePress = async () => {
+        const data = await getData();
+
+        if (data) {
+            setDogImage(data.message);
+        }
+    };
+
+    return (
+        <View style={styles.container}>
+            <Text style={styles.text}>Dogs</Text>
+
+            <Button onPress={handlePress}>Get dog pic</Button>
+
+            {dogImage && (
+                <Image 
+                    source={{ uri: dogImage }}
+                    style={{ width: 300, height: 300 }}
+                />
+            )}
+        </View>
+    );
 }
 
 const styles = StyleSheet.create({
@@ -19,11 +56,11 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
+        gap: 20,
     },
 
-    link: {
-        fontSize: 16,
-        color: '#0000ff',
-        textDecorationLine: 'underline',
+    text: {
+        fontSize: 24,
+        fontWeight: 600,
     },
 });
