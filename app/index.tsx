@@ -1,7 +1,5 @@
-import { Text, View } from 'react-native';
-import { StyleSheet } from 'react-native';
+import { Text, View, Image, StyleSheet } from 'react-native';
 import { Button } from '@react-navigation/elements';
-import { Image } from 'react-native';
 import { useState } from 'react';
 
 async function getData() {
